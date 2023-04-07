@@ -5,8 +5,14 @@ using UnityEngine;
 
 public class PlayerControls : MonoBehaviour
 {
+    //Camera
+    public Camera farCamera;
+    public Camera closeCamera;
+    public KeyCode switchKey;
+    private bool cameraSwitched = false;
+
     //Player Movement
-    private float playerSpeed = 4f;
+    private float playerSpeed = 6f;
     private float horizontalInput;
     private float verticalInput;
 
@@ -38,20 +44,54 @@ public class PlayerControls : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        Camera();
         BaseMovement();
         Jumping();
         Shooting();
     }
+
+    void Camera()
+    {
+        if (Input.GetKeyDown(switchKey) && cameraSwitched == false)
+        {
+            SwitchCamera();
+            cameraSwitched = true;
+        }
+        else if (Input.GetKeyDown(switchKey) && cameraSwitched)
+        {
+            SwitchCamera();
+            cameraSwitched = false;
+        }
+    }
+
+    void SwitchCamera()
+    {
+        farCamera.enabled = !farCamera.enabled;
+        closeCamera.enabled = !closeCamera.enabled;
+    }
+
     void BaseMovement()
     {
-        //Moving left and right
-        horizontalInput = Input.GetAxis("Horizontal");
-        transform.Translate(Vector3.right * Time.deltaTime * playerSpeed * horizontalInput);
+        if (cameraSwitched == false)
+        {
+            //Moving left and right
+            horizontalInput = Input.GetAxis("Horizontal");
+            transform.Translate(Vector3.right * Time.deltaTime * playerSpeed * horizontalInput);
 
-        //Moving forwards and backwards
-        verticalInput = Input.GetAxis("Vertical");
-        transform.Translate(Vector3.forward * Time.deltaTime * playerSpeed * verticalInput);
+            //Moving forwards and backwards
+            verticalInput = Input.GetAxis("Vertical");
+            transform.Translate(Vector3.forward * Time.deltaTime * playerSpeed * verticalInput);
+        }
+        else //Makes sure that when cameras are swiched, movement remains relative to view
+        {
+            //Moving left and right
+            horizontalInput = Input.GetAxis("Horizontal");
+            transform.Translate(Vector3.back * Time.deltaTime * playerSpeed * horizontalInput);
 
+            //Moving forwards and backwards
+            verticalInput = Input.GetAxis("Vertical");
+            transform.Translate(Vector3.right * Time.deltaTime * playerSpeed * verticalInput);
+        }
     }
 
     void Jumping()
