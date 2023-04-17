@@ -708,8 +708,9 @@ PlayerSettings:
   vrEditorSettings: {}
   cloudServicesEnabled:
     Build: 0
-    Collab: 1
+    Collab: 0
     Game Performance: 0
+    Legacy Analytics: 0
     Purchasing: 0
     UDP: 0
     UNet: 1
@@ -733,11 +734,11 @@ PlayerSettings:
   apiCompatibilityLevel: 6
   activeInputHandler: 0
   windowsGamepadBackendHint: 0
-  cloudProjectId: 9ec640c7-252e-4b95-b688-15f5640cada6
+  cloudProjectId: 0
   framebufferDepthMemorylessMode: 0
   qualitySettingsNames: []
-  projectName: Games For Change Lava Game (2)
-  organizationId: lukethename56
+  projectName: 
+  organizationId: 0
   cloudEnabled: 0
   legacyClampBlendShapeWeights: 0
   hmiLoadingImage: {fileID: 0}

@@ -1,10 +1,15 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.SceneManagement;
+
 
 public class PlayerControls : MonoBehaviour
 {
+    public UIManager UIManager;
+
     //Camera
     public Camera farCamera;
     public Camera closeCamera;
@@ -21,18 +26,26 @@ public class PlayerControls : MonoBehaviour
     public Rigidbody playerRb;
     private bool isGrounded = true;
     private bool isJumping = false;
-    private bool Boss1Defeated = true;
-    private bool isDoubleJumping = false;
+    //    private bool Boss1Defeated = true;
+    //    private bool isDoubleJumping = false;
 
 
     //Shooting
 
     [SerializeField]
     private Rigidbody freezerProjectilePrefab;
+    [SerializeField]
     public GameObject destroyerProjectilePrefab;
     [SerializeField]
     private Transform firePoint;
     private float launchForce = 700f;
+
+    //Stages
+    public bool Stage1;
+    public bool Stage2;
+    public bool Stage3;
+    public bool Stage4;
+    public bool Stage5;
 
 
     // Start is called before the first frame update
@@ -48,6 +61,37 @@ public class PlayerControls : MonoBehaviour
         BaseMovement();
         Jumping();
         Shooting();
+        Stage();
+    }
+
+    void LoadNextLevel()
+    {
+        int currentScenedIndex = SceneManager.GetActiveScene().buildIndex;
+        int nextSceneIndex = currentScenedIndex + 1;
+        if (nextSceneIndex == SceneManager.sceneCountInBuildSettings)
+        {
+            nextSceneIndex = 0;
+        }
+        SceneManager.LoadScene(nextSceneIndex);
+    }
+    void Stage()
+    {
+        if (transform.position.x > -18)
+        {
+            UIManager.SetStage(2);
+        }
+        if (transform.position.x > -11)
+        {
+            UIManager.SetStage(3);
+        }
+        if (transform.position.x > 13)
+        {
+            UIManager.SetStage(4);
+        }
+        if (transform.position.x > 25)
+        {
+            UIManager.SetStage(5);
+        }
     }
 
     void Camera()
@@ -97,48 +141,54 @@ public class PlayerControls : MonoBehaviour
     void Jumping()
     {
         //Single Jumping
-        if (Input.GetKeyDown(KeyCode.Space ) && isGrounded)
+        if (Input.GetKeyDown(KeyCode.Space) && isGrounded)
         {
-            Debug.Log("Should be jumping. ");
             isGrounded = false;
             playerRb.AddForce(Vector3.up * jumpForce, ForceMode.Impulse);
             isJumping = true;
         }
 
         //Double Jumping
-/*        if (Input.GetKeyDown(KeyCode.Space) && isJumping = true && Boss1Defeated = true)
-        {
-            playerRb.AddForce(Vector3.up * jumpForce, ForceMode.Impulse);
-            isDoubleJumping = true;
-        }
-*/
+        /*        if (Input.GetKeyDown(KeyCode.Space) && isJumping = true && Boss1Defeated = true)
+                {
+                    playerRb.AddForce(Vector3.up * jumpForce, ForceMode.Impulse);
+                    isDoubleJumping = true;
+                }
+        */
     }
 
     private void OnCollisionEnter(Collision collision)
     {
-        if (collision.contacts[0].normal == Vector3.up)
+        if (collision.contacts[0].normal == Vector3.up || collision.gameObject.tag == "LavaDrop" || collision.gameObject.tag == "LavaDrop2" || collision.gameObject.tag == "LavaDrop3" || collision.gameObject.tag == "LavaDrop4")
         {
-            isGrounded = true;
+            {
+                isGrounded = true;
+            }
+        }
+
+        if (collision.gameObject.tag == "Finish")
+        {
+            Debug.Log("You won!");
+            LoadNextLevel();
         }
     }
 
-    void Shooting() 
+    void Shooting()
     {
-        //(Freeze) Shooter
+            //(Freeze) Shooter
         if (Input.GetKeyDown(KeyCode.U))
         {
             //            Debug.Log("Should be instantiating. ");
             var projectileInstance = Instantiate(freezerProjectilePrefab, transform.position, freezerProjectilePrefab.transform.rotation);
-                projectileInstance.AddForce(firePoint.forward * launchForce);
+            projectileInstance.AddForce(firePoint.right * launchForce);
         }
 
-
-        //(Destroy Ice) Shooter
+            //(Destroy Ice) Shooter
         if (Input.GetKeyDown(KeyCode.I))
         {
             //Debug.Log("Should be instantiating destroy shooter. ");
             Instantiate(destroyerProjectilePrefab, transform.position, destroyerProjectilePrefab.transform.rotation);
         }
-    }
 
+    }
 }

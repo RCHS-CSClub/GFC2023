@@ -3,7 +3,12 @@
 --- !u!78 &1
 TagManager:
   serializedVersion: 2
-  tags: []
+  tags:
+  - Lava
+  - LavaDrop
+  - LavaDrop2
+  - LavaDrop3
+  - LavaDrop4
   layers:
   - Default
   - TransparentFX
